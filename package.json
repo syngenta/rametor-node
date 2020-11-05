@@ -1,0 +1,86 @@
+{
+    "name": "@syngenta-digital/dbv",
+    "author": "Paul Cruse, Technical Lead USCO Syngenta",
+    "main": "src/index.js",
+    "version": "0.0.1",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/syngenta-digital/dbv-node.git"
+    },
+    "bugs": {
+        "url": "https://github.com/syngenta-digital/dbv-node/issues"
+    },
+    "scripts": {
+        "test": "unittest=true mocha --recursive",
+        "lint": "eslint src/**"
+    },
+    "dependencies": {
+        "aws-sdk": "~2.721.0",
+        "axios": "^0.19.2",
+        "mysql": "~2.18.1",
+        "mysql-import": "~4.0.24",
+        "neo4j-driver": "^4.1.1",
+        "util": "~0.12.3"
+    },
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "eslint": "^7.7.0",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-jsx-a11y": "^6.3.1",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "mocha": "^8.1.1",
+        "mocha-junit-reporter": "^2.0.0",
+        "mocha-multi-reporters": "^1.1.7",
+        "mochawesome": "^6.1.1",
+        "nyc": "^15.1.0",
+        "prettier": "^2.0.5"
+    },
+    "engines": {
+        "node": ">=12.14.1"
+    },
+    "nyc": {
+        "temp-directory": "./node_modules/.nyc_output"
+    },
+    "eslintConfig": {
+        "env": {
+            "es6": true
+        },
+        "parserOptions": {
+            "ecmaVersion": 9
+        },
+        "plugins": [
+            "prettier"
+        ],
+        "extends": [
+            "plugin:prettier/recommended"
+        ],
+        "rules": {
+            "prettier/prettier": [
+                "warn",
+                {
+                    "trailingComma": "none",
+                    "printWidth": 120,
+                    "tabWidth": 4,
+                    "singleQuote": true,
+                    "bracketSpacing": false,
+                    "arrowParens": "always"
+                }
+            ],
+            "eqeqeq": "error",
+            "prefer-destucturing": 0,
+            "no-global-assign": 0,
+            "rest-spread-spacing": 1,
+            "no-restricted-syntax": 0,
+            "consistent-return": 0,
+            "import/no-dynamic-require": 0,
+            "no-param-reassign": 0,
+            "global-require": 0,
+            "class-methods-use-this": 0,
+            "no-underscore-dangle": 0,
+            "camelcase": 0
+        }
+    }
+}

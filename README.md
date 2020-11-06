@@ -40,7 +40,7 @@ await versioner.apply({
     masterPassword: process.env.DB_MASTER_PASSWORD,
     appDB: process.env.DB_NAME,
     appUsername: process.env.DB_APP_USER,
-    stack: process.env.STACK,
+    paramName: `${process.env.STACK}/mysql-config`,
     region: process.env.REGION,
     versionsDirectory: 'application/v1/models/versions',
     useSSM: process.env.STAGE !== 'local' // this will rewrite the password for the master user and therefore make it unusable

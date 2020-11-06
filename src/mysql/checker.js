@@ -1,3 +1,4 @@
+const builder = require('./builder');
 const connection = require('./connection');
 const ssmInterface = require('../common/ssmInterface');
 
@@ -47,6 +48,7 @@ exports.check = async (params) => {
     } catch (error) {
         console.log('CURRENT VERSION: INITIAL DEPLOYMENT');
         _generateAppConfig(params);
+        await builder.build(params);
         if (params.useSSM && !params.foundSSM) {
             const ssmParams = _getUploadParams(params);
             await ssmInterface.upload(params, ssmParams);

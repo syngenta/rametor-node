@@ -5,7 +5,7 @@ const _getSQLStatements = async (params) => {
     statements = [
         `CREATE DATABASE IF NOT EXISTS ${params.appDB};`,
         `CREATE TABLE IF NOT EXISTS ${params.appDB}.__db_versions (\`version_file\` varchar(255) DEFAULT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8`,
-        `CREATE USER  IF NOT EXISTS '${params.appUsername}'@'%' IDENTIFIED BY '${params.mysqlPasword}';`,
+        `CREATE USER IF NOT EXISTS '${params.appUsername}'@'%' IDENTIFIED BY '${params.mysqlPasword}';`,
         `GRANT ALL ON ${params.appDB}.* TO '${params.appUsername}'@'%' IDENTIFIED BY '${params.mysqlPasword}';`,
         'FLUSH PRIVILEGES'
     ];

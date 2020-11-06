@@ -9,19 +9,13 @@ const _getSQLStatements = async (params) => {
         `GRANT ALL ON ${params.appDB}.* TO '${params.appUsername}'@'%' IDENTIFIED BY '${params.mysqlPasword}';`,
         'FLUSH PRIVILEGES'
     ];
-    if (params.useSSM && !params.foundSSM) {
-        statements.push(
-            `UPDATE mysql.user SET authentication_string = PASSWORD('${params.destroyPassword}') WHERE User = '${params.masterUser}' AND Host = '%';`
-        );
-        statements.push('FLUSH PRIVILEGES');
-    }
     return statements;
 };
 
 exports.build = async (params) => {
     console.log(`BUILDING DATABASE`);
     const statements = await _getSQLStatements(params);
-    const query = await connection.connect(params.builderConfig);
+    const query = await connection.connect(params.mysqlConfig);
     for (const statement of statements) {
         await query(statement);
         console.log(`BUILDER RAN: ${statement}`);

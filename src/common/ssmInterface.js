@@ -25,6 +25,7 @@ exports.download = async (paramName) => {
             })
             .promise();
         if (result) {
+            console.log('FOUND CONFIG IN SSM');
             return result.Parameter.Value;
         }
     } catch (error) {

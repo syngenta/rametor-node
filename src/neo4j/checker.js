@@ -40,7 +40,6 @@ const _getSSMConnection = async (params) => {
     if (results) {
         params.neo4jConfig = JSON.parse(results);
         params.foundSSM = true;
-        console.log('FOUND CONFIG IN SSM');
     }
 };
 

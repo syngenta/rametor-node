@@ -4,6 +4,20 @@ const path = require('path');
 const connection = require('./connection');
 const sorter = require('../common/sorter');
 
+const _destroyMasterUser = async (params) => {
+    if (params.useSSM && !params.foundSSM) {
+        console.log(`DESTROYING MASTER USER`);
+        const statements = [
+            `UPDATE mysql.user SET authentication_string = PASSWORD('${params.destroyPassword}') WHERE User = '${params.masterUser}' AND Host = '%';`,
+            'FLUSH PRIVILEGES'
+        ];
+        const query = await connection.connect(params.mysqlConfig);
+        for (const statement of statements) {
+            await query(statement);
+            console.log(`DESTROYER RAN: ${statement}`);
+        }
+    }
+};
 const _mysqlUriParser = (uri) => {
     const parts = uri.split(':');
     const user = parts[1].split('//')[1];
@@ -20,18 +34,13 @@ const _mysqlUriParser = (uri) => {
     return params;
 };
 
-const _getAppConnection = async (params) => {
-    const mysql = await _mysqlUriParser(params.mysqlConfig);
-    const importer = new Importer(mysql);
-    return importer;
-};
-
 const apply = async (params) => {
     console.log('APPLYING VERSIONS');
     const versions = await connection.connect(params.mysqlConfig);
     const results = await versions('SELECT * FROM __db_versions');
     const completed = Array.from(results, (version) => version.version_file);
-    const importer = await _getAppConnection(params);
+    const mysql = await _mysqlUriParser(params.mysqlConfig);
+    const importer = new Importer(mysql);
     const dir = path.join(process.cwd(), params.versionsDirectory);
     const files = sorter.sortFiles(await fs.readdirSync(dir), '.sql');
     for (const file of files) {
@@ -45,6 +54,7 @@ const apply = async (params) => {
             console.log(`VERSION APPLICATOR SKIPPED: ${file}`);
         }
     }
+    await _destroyMasterUser(params);
 };
 
 module.exports = {apply};

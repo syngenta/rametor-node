@@ -34,7 +34,9 @@ workflows:
     install-build-deploy:
         jobs:
             - install-build-deploy:
-                context: npm-org-token
+                context:
+                    - npm-org-token
+                    - tools-cicd
                 filters:
                     tags:
                         only: /.*/

@@ -25,11 +25,13 @@ exports.download = async (paramName) => {
             })
             .promise();
         if (result) {
-            console.log('FOUND CONFIG IN SSM');
             return result.Parameter.Value;
         }
     } catch (error) {
-        console.log(error);
+        if (error.code === 'ParameterNotFound') {
+            return false;
+        }
+        console.error(error);
     }
-    return false;
+    throw 'Unhandled SSM Download Error: CHECK LOGS';
 };

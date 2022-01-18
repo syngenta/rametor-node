@@ -1,25 +1,14 @@
 version: 2.1
-orbs:
-    aws-cli: circleci/aws-cli@1.2.1
-    slack: circleci/slack@3.4.2
 commands:
     node-install:
         steps:
             - run: npm ci
-    node-linter:
-        steps:
-            - run: npm run lint -- --format html --output-file ./coverage/lint/index.html
-            - store_artifacts:
-                path: ./coverage
     npm-deploy:
         steps:
-            - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            - run: echo "registry=https://registry.npmjs.org" >> .npmrc
+            - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
             - run: npm version $CIRCLE_TAG --allow-same-version --no-git-tag-version
             - run: npm publish --access public
-    slack-status:
-        steps:
-            - slack/status:
-                mentions: '${CIRCLE_USERNAME}, version=$CIRCLE_TAG'
 jobs:
     install-build-deploy:
         docker:
@@ -27,16 +16,13 @@ jobs:
         steps:
             - checkout
             - node-install
-            - node-linter
             - npm-deploy
-            - slack-status
 workflows:
     install-build-deploy:
         jobs:
             - install-build-deploy:
                 context:
                     - npm-org-token
-                    - tools-cicd
                 filters:
                     tags:
                         only: /.*/

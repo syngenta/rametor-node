@@ -12,6 +12,7 @@ const _randomizePassword = (params) => {
         password: _randomString(),
         encrypted: params.encrypted
     };
+    console.log('RANDOMIZED PASSOWORD');
 };
 
 const _uploadNeo4jConfigToSSM = async (params) => {
@@ -24,6 +25,7 @@ const _uploadNeo4jConfigToSSM = async (params) => {
         }
     ];
     await ssmInterface.upload(params, ssmParams);
+    console.log('UPLOADED PASSWORD SSM');
 };
 
 const _getLocalConnection = (params) => {
@@ -38,8 +40,11 @@ const _getLocalConnection = (params) => {
 const _getSSMConnection = async (params) => {
     const results = await ssmInterface.download(`/${params.stack}/neo4j-config`);
     if (results) {
+        console.log(`SSM PARAM FOUND: /${params.stack}/neo4j-config`);
         params.neo4jConfig = JSON.parse(results);
         params.foundSSM = true;
+    } else {
+        console.log(`SSM PARAM NOT FOUND: /${params.stack}/neo4j-config`);
     }
 };
 
@@ -52,44 +57,48 @@ const _getVersions = (results) => {
     }
 };
 
+const _changePassword = async (params, session) => {
+    await session.run(`CALL dbms.security.changePassword('${params.neo4jConfig.password}')`);
+    console.log('CHANGED NEO4J PASSWORD');
+};
+
+const _checkVersions = async (params, session) => {
+    const versions = await session.run('MATCH (v:__db_versions) RETURN v');
+    params.versions = _getVersions(versions);
+    if (!params.versions.length) {
+        console.log('CURRENT VERSION: INITIAL DEPLOYMENT');
+        throw new Error('CURRENT VERSION: INITIAL DEPLOYMENT');
+    }
+    console.log(`CURRENT VERSIONS: ${params.versions.join(', ')}`);
+};
+
 const _getNeo4jConfig = async (params) => {
     if (params.useSSM) {
+        console.log('USING SSM CONFIG');
         await _getSSMConnection(params);
     } else {
+        console.log('USING LOCAL CONFIG');
         _getLocalConnection(params);
     }
 };
 
 exports.check = async (params) => {
     console.log('CHECKING VERSION');
+    await _getNeo4jConfig(params);
+    const driver = await connection.getDriver(params.neo4jConfig);
+    const session = await driver.session();
     try {
-        await _getNeo4jConfig(params);
-        const driver = await connection.getDriver(params.neo4jConfig);
-        const session = await driver.session();
-        const versions = await session.run('MATCH (v:__db_versions) RETURN v');
-        params.versions = _getVersions(versions);
-        session.close();
-        driver.close();
-        if (!params.versions.length) {
-            throw new Error('initial version');
-        }
-        console.log(`CURRENT VERSIONS: ${params.versions.join(', ')}`);
+        await _checkVersions(params, session);
     } catch (error) {
-        console.log('CURRENT VERSION: INITIAL DEPLOYMENT');
+        console.error('CHECK VERSION ERROR:', error);
         params.versions = [];
         if (params.useSSM && !params.foundSSM) {
-            console.log('BUILDING CONFIG IN SSM');
-            _getLocalConnection(params);
-            const driver2 = await connection.getDriver(params.neo4jConfig);
-            const session2 = await driver2.session();
             _randomizePassword(params);
-            console.log('RANDOMIZED PASSOWORD');
             await _uploadNeo4jConfigToSSM(params);
-            console.log('UPLOADED PASSWORD SSM');
-            await session2.run(`CALL dbms.security.changePassword('${params.neo4jConfig.password}')`);
-            console.log('CHANGED NEO4J PASSWORD');
-            session2.close();
-            driver2.close();
+            await _changePassword(params, session);
         }
+    } finally {
+        await session.close();
+        await driver.close();
     }
 };

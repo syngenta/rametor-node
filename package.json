@@ -17,7 +17,7 @@
     },
     "dependencies": {
         "aws-sdk": "~2.970.0",
-        "axios": "^0.21.1",
+        "axios": "^0.21.2",
         "mysql": "~2.18.1",
         "mysql-import": "~5.0.21",
         "neo4j-driver": "^4.3.6",

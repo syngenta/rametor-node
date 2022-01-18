@@ -2,7 +2,7 @@
     "name": "@syngenta-digital/dbv",
     "author": "Paul Cruse, Technical Lead USCO Syngenta",
     "main": "src/index.js",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "license": "Apache-2.0",
     "repository": {
         "type": "git",

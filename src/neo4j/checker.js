@@ -45,6 +45,7 @@ const _getSSMConnection = async (params) => {
         params.foundSSM = true;
     } else {
         console.log(`SSM PARAM NOT FOUND: /${params.stack}/neo4j-config`);
+        params.foundSSM = false;
     }
 };
 
@@ -76,7 +77,8 @@ const _getNeo4jConfig = async (params) => {
     if (params.useSSM) {
         console.log('USING SSM CONFIG');
         await _getSSMConnection(params);
-    } else {
+    }
+    if (!params.foundSSM) {
         console.log('USING LOCAL CONFIG');
         _getLocalConnection(params);
     }

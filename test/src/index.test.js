@@ -2,10 +2,12 @@ const {assert} = require('chai');
 const versioner = require('../../src/index');
 const connection = require('../../src/mysql/connection');
 
+const unit_test_connection = `mysql://root:password@localhost:3306/unittest`;
+
 describe('Test index.js', () => {
     before(async () => {
         console.log('\n\n==== STARTING INDEX.JS UNIT TESTS ====\n\n');
-        const pre = await connection.connect(params.mysqlConfig);
+        const pre = await connection.connect(unit_test_connection);
         await pre(`CREATE DATABASE IF NOT EXISTS unittest;`);
     });
     it('throws error when empty arguments', async () => {
@@ -58,7 +60,7 @@ describe('Test index.js', () => {
                 versionsDirectory: 'test/db_versions/mysql',
                 useSSM: false
             });
-            await connection.disconnect(`mysql://root:password@localhost:3306/unittest`);
+            await connection.disconnect(unit_test_connection);
             assert.equal(true, true);
         } catch (error) {
             console.error(error);

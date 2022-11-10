@@ -1,0 +1,2 @@
+CREATE CONSTRAINT ON (s:salesforce) ASSERT s.object_unique IS UNIQUE;
+CREATE CONSTRAINT ON (s:salesforce) ASSERT (s.org_id, s.object_type, s.object_id) IS NODE KEY;

@@ -3,12 +3,14 @@ const versioner = require('../../src/index');
 const mysql = require('mysql');
 const util = require('util');
 
-const unit_test_connection = `mysql://root:password@localhost:3306`;
-
 describe('Test index.js', () => {
     before(async () => {
         console.log('\n\n==== STARTING INDEX.JS UNIT TESTS ====\n\n');
-        const pre = await mysql.createConnection(unit_test_connection);
+        const pre = await mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: 'password'
+        });
         await pre.connect();
         await pre.query(`CREATE DATABASE IF NOT EXISTS unittest;`);
         await pre.destroy();
@@ -63,7 +65,6 @@ describe('Test index.js', () => {
                 versionsDirectory: 'test/db_versions/mysql',
                 useSSM: false
             });
-            await connection.disconnect(unit_test_connection);
             assert.equal(true, true);
         } catch (error) {
             console.error(error);

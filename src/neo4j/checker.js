@@ -10,7 +10,7 @@ const _randomizePassword = (params) => {
         host: params.host,
         user: params.masterUser,
         password: _randomString(),
-        old_password: params.masterUser,
+        old_password: params.masterPassword,
         encrypted: params.encrypted
     };
     console.log('RANDOMIZED PASSOWORD');
@@ -34,7 +34,7 @@ const _getLocalConnection = (params) => {
         host: params.host,
         user: params.masterUser,
         password: params.masterPassword,
-        old_password: params.masterUser,
+        old_password: params.masterPassword,
         encrypted: params.encrypted
     };
 };

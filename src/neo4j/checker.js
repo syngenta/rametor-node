@@ -10,6 +10,7 @@ const _randomizePassword = (params) => {
         host: params.host,
         user: params.masterUser,
         password: _randomString(),
+        old_password: params.masterUser,
         encrypted: params.encrypted
     };
     console.log('RANDOMIZED PASSOWORD');
@@ -33,6 +34,7 @@ const _getLocalConnection = (params) => {
         host: params.host,
         user: params.masterUser,
         password: params.masterPassword,
+        old_password: params.masterUser,
         encrypted: params.encrypted
     };
 };
@@ -59,7 +61,9 @@ const _getVersions = (results) => {
 };
 
 const _changePassword = async (params, session) => {
-    await session.run(`CALL dbms.security.changePassword('${params.neo4jConfig.password}')`);
+    await session.run(
+        `ALTER CURRENT USER SET PASSWORD FROM '${params.neo4jConfig.old_password}' TO '${params.neo4jConfig.password}'`
+    );
     console.log('CHANGED NEO4J PASSWORD');
 };
 

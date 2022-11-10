@@ -1,9 +1,12 @@
 const {assert} = require('chai');
 const versioner = require('../../src/index');
+const connection = require('../../src/mysql/connection');
 
 describe('Test index.js', () => {
     before(async () => {
         console.log('\n\n==== STARTING INDEX.JS UNIT TESTS ====\n\n');
+        const pre = await connection.connect(params.mysqlConfig);
+        await pre(`CREATE DATABASE IF NOT EXISTS unittest;`);
     });
     it('throws error when empty arguments', async () => {
         try {
@@ -21,7 +24,7 @@ describe('Test index.js', () => {
             assert.equal(true, true);
         }
     });
-    it('succeeds with basic neo4j settings', async () => {
+    it('succeeds with basic neo4j settings', async (done) => {
         try {
             await versioner.apply({
                 engine: 'neo4j',
@@ -35,12 +38,13 @@ describe('Test index.js', () => {
                 useSSM: false
             });
             assert.equal(true, true);
+            done();
         } catch (error) {
             console.error(error);
             assert.equal(false, true);
         }
     });
-    it('succeeds with basic mysql settings', async () => {
+    it('succeeds with basic mysql settings', async (done) => {
         try {
             await versioner.apply({
                 engine: 'mysql',
@@ -54,6 +58,7 @@ describe('Test index.js', () => {
                 versionsDirectory: 'test/db_versions/mysql',
                 useSSM: false
             });
+            await connection.disconnect(`mysql://root:password@localhost:3306/unittest`);
             assert.equal(true, true);
         } catch (error) {
             console.error(error);

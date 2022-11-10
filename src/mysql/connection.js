@@ -7,4 +7,9 @@ const connect = async (uri) => {
     return query;
 };
 
-module.exports = {connect};
+const disconnect = async (uri) => {
+    const connection = await mysql.createConnection(uri);
+    connection.destroy();
+};
+
+module.exports = {connect, disconnect};

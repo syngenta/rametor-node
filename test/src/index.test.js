@@ -1,14 +1,17 @@
 const {assert} = require('chai');
 const versioner = require('../../src/index');
-const connection = require('../../src/mysql/connection');
+const mysql = require('mysql');
+const util = require('util');
 
 const unit_test_connection = `mysql://root:password@localhost:3306`;
 
 describe('Test index.js', () => {
     before(async () => {
         console.log('\n\n==== STARTING INDEX.JS UNIT TESTS ====\n\n');
-        const pre = await connection.connect(unit_test_connection);
-        await pre(`CREATE DATABASE IF NOT EXISTS unittest;`);
+        const pre = await mysql.createConnection(unit_test_connection);
+        await pre.connect();
+        await pre.query(`CREATE DATABASE IF NOT EXISTS unittest;`);
+        await pre.destroy();
     });
     it('throws error when empty arguments', async () => {
         try {

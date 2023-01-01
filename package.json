@@ -18,7 +18,7 @@
         "lint": "eslint src/**"
     },
     "dependencies": {
-        "aws-sdk": "^2.1265.0",
+        "aws-sdk": "^2.1286.0",
         "axios": "^1.2.0",
         "mysql": "^2.18.1",
         "mysql-import": "^5.0.26",
